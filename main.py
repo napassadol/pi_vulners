@@ -79,8 +79,9 @@ class MyApp(QMainWindow):
         self.report.widget.hide()
     
     def shutdown(self):
-        process = subprocess.run('ls -lat', shell=True, check=True, stdout=subprocess.PIPE, universal_newlines=True)
-        output = process.stdout
+        command = "/usr/bin/sudo /sbin/shutdown now"
+        process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+        output = process.communicate()[0]
         print(output)
 
     def restart(self):

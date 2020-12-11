@@ -1,10 +1,11 @@
-from sqlalchemy import create_engine, create_engine
+from sqlalchemy import create_engine, create_engine, and_
 from sqlalchemy.orm import sessionmaker
 import datetime
 import sqlModel
 import vulners
 import re
 import time
+import subprocess
 
 engine = create_engine('mysql+pymysql://networkscan:12341234@128.199.195.239/network_scan', echo = True)
 
@@ -12,13 +13,16 @@ Session = sessionmaker(bind=engine)
 
 vulners_api = vulners.Vulners(api_key="7NNARV5RD6U90AQ18CKWQSSLDOAOTHCSTATMHKYZNDQC2DJD7VTCVAVVI0MB2QHO")
 
-output_path = 'scan.text'
+# output_path = 'scan2.text'
 
 def getOutput():
-    f = open(output_path, "r")
-    text = f.read()
+    command = 'nmap -sV --script=vulscan/vulscan.nse --script-args vulscandb=cve.csv 192.168.1.1'
+    process = subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, universal_newlines=True)
+    output = process.stdout
+    # f = open(output_path, "r")
+    # text = f.read()
     # print(text)
-    return text
+    return output
 
 def readCVEData(text):
     global cve
@@ -81,9 +85,11 @@ def insertNmap(data, scanData):
 
     session.add_all(nmapList)
     session.commit()
-    nmap_id = nmapList[0].id
-    for item in cvssList:
-        item.nmap_id = nmap_id
+    print('---------------------')
+    print(len(nmapList))
+    print('---------------------')
+    for i in range(len(nmapList)):
+        cvssList[i].nmap_id = nmapList[i].id
     session.add_all(cvssList)
     session.commit()
 
@@ -117,8 +123,8 @@ def insertCvss2(data, nmap_id):
 
 def getSeverity(scan_id):
     session = Session()
-    low = session.query(sqlModel.Nmap).filter(sqlModel.Nmap.severity == 'LOW').count()
-    medium = session.query(sqlModel.Nmap).filter(sqlModel.Nmap.severity == 'MEDIUM').count()
-    high = session.query(sqlModel.Nmap).filter(sqlModel.Nmap.severity == 'HIGH').count()
+    low = session.query(sqlModel.Nmap).filter(and_(sqlModel.Nmap.severity == 'LOW', sqlModel.Nmap.scan_id == scan_id)).count()
+    medium = session.query(sqlModel.Nmap).filter(and_(sqlModel.Nmap.severity == 'MEDIUM', sqlModel.Nmap.scan_id == scan_id)).count()
+    high = session.query(sqlModel.Nmap).filter(and_(sqlModel.Nmap.severity == 'HIGH', sqlModel.Nmap.scan_id == scan_id)).count()
     print('low: {}, medium: {}, high: {}'.format(str(low), str(medium), str(high)))
     return low, medium, high
