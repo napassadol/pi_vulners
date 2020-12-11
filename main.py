@@ -1,10 +1,12 @@
 import sys
 import os
 import time
+import subprocess
 
 import chart
 import nmap
 
+from PyQt5 import QtGui, QtCore
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -33,6 +35,7 @@ class Worker(QRunnable):
 class MyApp(QMainWindow):
     def __init__(self, parent=None):
         super(MyApp, self).__init__()
+        # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.threadpool = QThreadPool()
 
         self.start_time = 0
@@ -76,10 +79,15 @@ class MyApp(QMainWindow):
         self.report.widget.hide()
     
     def shutdown(self):
-        pass
+        process = subprocess.run('ls -lat', shell=True, check=True, stdout=subprocess.PIPE, universal_newlines=True)
+        output = process.stdout
+        print(output)
 
     def restart(self):
-        pass
+        command = "/usr/bin/sudo /sbin/shutdown -r now"
+        process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+        output = process.communicate()[0]
+        print(output)
 
     def openScanUI(self):
         indexSelected = self.main.listWidget.currentRow()
