@@ -38,6 +38,8 @@ class MyApp(QMainWindow):
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.threadpool = QThreadPool()
 
+        self.scanData = None
+
         self.start_time = 0
 
         self.main = ui_main()
@@ -103,7 +105,7 @@ class MyApp(QMainWindow):
         self.report.widget.show()
         self.scan.widget.hide()
 
-        low, medium, high = nmap.getSeverity(7)
+        low, medium, high = nmap.getSeverity(self.scanData.id)
         chart.createPieChart(low, medium, high)
 
         pixmap = QPixmap('./plot.png')
@@ -119,6 +121,7 @@ class MyApp(QMainWindow):
 
         self.scan.statusEdit.setText('Uploading to database')
         scanData = nmap.insertScan()
+        self.scanData = scanData
 
         nmap.insertNmap(data, scanData)
         self.scan.statusEdit.setText('Finish')
