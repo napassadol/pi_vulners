@@ -35,7 +35,7 @@ class Worker(QRunnable):
 class MyApp(QMainWindow):
     def __init__(self, parent=None):
         super(MyApp, self).__init__()
-        # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.threadpool = QThreadPool()
 
         self.start_time = 0
