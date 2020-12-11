@@ -16,7 +16,7 @@ vulners_api = vulners.Vulners(api_key="7NNARV5RD6U90AQ18CKWQSSLDOAOTHCSTATMHKYZN
 # output_path = 'scan2.text'
 
 def getOutput():
-    command = 'nmap -sV --script=vulscan/vulscan.nse --script-args vulscandb=cve.csv 192.168.1.1'
+    command = 'nmap -sV --script=vulscan/vulscan.nse --script-args vulscandb=cve.csv 192.168.1.0/24'
     process = subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, universal_newlines=True)
     output = process.stdout
     # f = open(output_path, "r")
