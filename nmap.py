@@ -13,7 +13,7 @@ Session = sessionmaker(bind=engine)
 
 vulners_api = vulners.Vulners(api_key="7NNARV5RD6U90AQ18CKWQSSLDOAOTHCSTATMHKYZNDQC2DJD7VTCVAVVI0MB2QHO")
 
-# output_path = 'scan2.text'
+# output_path = 'scan.text'
 
 def getOutput():
     command = 'nmap -sV --script=vulscan/vulscan.nse --script-args vulscandb=cve.csv 192.168.1.0/24'
